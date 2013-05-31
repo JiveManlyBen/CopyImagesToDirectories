@@ -8,25 +8,34 @@ try:
 	in_path = sys.argv[1]
 	out_path = sys.argv[2]
 except IndexError, e:
-	print "required input and output directories not supplied " + str(e)
+	print "required input and output directories not supplied: " + str(e)
 	exit()
 try:
 	not_copied = False
         for f in os.listdir(in_path):
                 if os.path.isfile(os.path.join(in_path, f)):
 			if f.lower().endswith(".jpg") or f.lower().endswith(".cr2"):
-	                       	new_location = os.path.join(out_path, time.strftime("%Y"+os.pathsep, time.localtime(os.path.getmtime(in_path + f))))
-				if not os.path.exists(new_location):
-					os.makedirs(new_location)
-	                       	new_location = os.path.join(new_location, time.strftime("%Y_%m_%d", time.localtime(os.path.getmtime(in_path + f))))
-				if not os.path.exists(new_location):
-					os.makedirs(new_location)
-	                       	new_location = os.path.join(new_location, f)
-				if (not os.path.isfile(new_location)):
+				y_path = time.strftime("%Y", time.localtime(os.path.getmtime(in_path + f)))
+				m_path = time.strftime("%Y" + os.path.sep +"%Y_%m", time.localtime(os.path.getmtime(in_path + f)))
+				d_path = time.strftime("%Y" + os.path.sep +"%Y_%m" + os.path.sep + "%Y_%m_%d", time.localtime(os.path.getmtime(in_path + f)))
+				f_path = os.path.join(os.path.join(out_path, d_path), f)
+				if not os.path.exists(os.path.join(out_path, d_path)):
+					if os.path.exists(os.path.join(out_path, m_path)):
+						os.makedirs(os.path.join(out_path, d_path))
+					else:
+						if os.path.exists(os.path.join(out_path, y_path)):
+							os.makedirs(os.path.join(out_path, m_path))
+							os.makedirs(os.path.join(out_path, d_path))
+						else:
+							os.makedirs(os.path.join(out_path, y_path))
+							os.makedirs(os.path.join(out_path, m_path))
+							os.makedirs(os.path.join(out_path, d_path))
+
+				if (not os.path.isfile(f_path)):
 					print "copying " + os.path.join(in_path, f)
-					shutil.copy2(os.path.join(in_path, f), new_location)
-				elif not filecmp.cmp(os.path.join(in_path, f), new_location):
-					print "warning: file mismatch for \"" + new_location + "\""
+					shutil.copy2(os.path.join(in_path, f), f_path)
+				elif not filecmp.cmp(os.path.join(in_path, f), f_path):
+					print "warning: file mismatch for \"" + f_path + "\""
 					not_copied = True
 	print "Copied new images from \"" + in_path + "\" to \"" + out_path + "\""
 	if not_copied:
