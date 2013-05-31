@@ -14,7 +14,7 @@ try:
 	not_copied = False
         for f in os.listdir(in_path):
                 if os.path.isfile(os.path.join(in_path, f)):
-			if f.lower().endswith(".jpg") or f.lower().endswith(".cr2"):
+			if f.lower().endswith(".jpg") or f.lower().endswith(".cr2") or f.lower().endswith(".mov"):
 				y_path = time.strftime("%Y", time.localtime(os.path.getmtime(in_path + f)))
 				m_path = time.strftime("%Y" + os.path.sep +"%Y_%m", time.localtime(os.path.getmtime(in_path + f)))
 				d_path = time.strftime("%Y" + os.path.sep +"%Y_%m" + os.path.sep + "%Y_%m_%d", time.localtime(os.path.getmtime(in_path + f)))
