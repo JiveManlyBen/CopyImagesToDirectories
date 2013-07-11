@@ -4,11 +4,18 @@ import sys
 import shutil
 import time
 
+def get_example_text():
+	if os.path.sep == "\\":
+		return "Example: python CopyImagesToDirectories.py c:\\input\\ c:\\pics\\"
+	else:
+		return "Example: python CopyImagesToDirectories.py /usr/local/input/ /usr/local/pics/"
+	
 try:
 	in_path = sys.argv[1]
 	out_path = sys.argv[2]
 except IndexError, e:
 	print "required input and output directories not supplied: " + str(e)
+	print "\n" + get_example_text()
 	exit()
 try:
 	not_copied = False
