@@ -9,10 +9,16 @@ def get_example_text():
 		return "Example: python CopyImagesToDirectories.py c:\\input\\ c:\\pics\\"
 	else:
 		return "Example: python CopyImagesToDirectories.py /usr/local/input/ /usr/local/pics/"
-	
+
+def add_trailing_separator(file_path):
+	if file_path[-1:] != os.path.sep:
+		return file_path + os.path.sep
+	else:
+		return file_path
+		
 try:
-	in_path = sys.argv[1]
-	out_path = sys.argv[2]
+	in_path = add_trailing_separator(sys.argv[1])
+	out_path = add_trailing_separator(sys.argv[2])
 except IndexError, e:
 	print "required input and output directories not supplied: " + str(e)
 	print "\n" + get_example_text()
