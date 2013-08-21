@@ -4,6 +4,9 @@ import sys
 import shutil
 import time
 
+#from PIL import Image
+#from PIL.ExifTags import TAGS
+
 def get_example_text():
 	if os.path.sep == "\\":
 		return "Example: python CopyImagesToDirectories.py c:\\input\\ c:\\pics\\"
@@ -15,6 +18,9 @@ def add_trailing_separator(file_path):
 		return file_path + os.path.sep
 	else:
 		return file_path
+
+def get_file_system_time(file_path):
+	return time.localtime(os.path.getmtime(file_path))
 		
 try:
 	in_path = add_trailing_separator(sys.argv[1])
@@ -28,9 +34,10 @@ try:
         for f in os.listdir(in_path):
                 if os.path.isfile(os.path.join(in_path, f)):
 			if f.lower().endswith(".jpg") or f.lower().endswith(".cr2") or f.lower().endswith(".mov"):
-				y_path = time.strftime("%Y", time.localtime(os.path.getmtime(in_path + f)))
-				m_path = time.strftime("%Y" + os.path.sep +"%Y_%m", time.localtime(os.path.getmtime(in_path + f)))
-				d_path = time.strftime("%Y" + os.path.sep +"%Y_%m" + os.path.sep + "%Y_%m_%d", time.localtime(os.path.getmtime(in_path + f)))
+				modified_time = get_file_system_time(in_path + f)
+				y_path = time.strftime("%Y", modified_time)
+				m_path = time.strftime("%Y" + os.path.sep +"%Y_%m", modified_time)
+				d_path = time.strftime("%Y" + os.path.sep +"%Y_%m" + os.path.sep + "%Y_%m_%d", modified_time)
 				f_path = os.path.join(os.path.join(out_path, d_path), f)
 				if not os.path.exists(os.path.join(out_path, d_path)):
 					if os.path.exists(os.path.join(out_path, m_path)):
