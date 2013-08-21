@@ -4,9 +4,6 @@ import sys
 import shutil
 import time
 
-#from PIL import Image
-#from PIL.ExifTags import TAGS
-
 def get_example_text():
 	if os.path.sep == "\\":
 		return "Example: python CopyImagesToDirectories.py c:\\input\\ c:\\pics\\"
