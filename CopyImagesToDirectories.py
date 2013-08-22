@@ -1,3 +1,5 @@
+from PIL import Image
+from PIL.ExifTags import TAGS
 import os
 import filecmp
 import sys
@@ -18,7 +20,18 @@ def add_trailing_separator(file_path):
 
 def get_file_system_time(file_path):
 	return time.localtime(os.path.getmtime(file_path))
-		
+
+def get_exif_time(file_path):
+    ret = {}
+    i = Image.open(file_path)
+    info = i._getexif()
+    for tag, value in info.items():
+		if TAGS.get(tag, tag) == "DateTimeOriginal":
+			if value is not None:
+				return time.strptime(value, '%Y:%m:%d %H:%M:%S')
+			else:
+				return None
+	
 try:
 	in_path = add_trailing_separator(sys.argv[1])
 	out_path = add_trailing_separator(sys.argv[2])
@@ -31,10 +44,12 @@ try:
         for f in os.listdir(in_path):
                 if os.path.isfile(os.path.join(in_path, f)):
 			if f.lower().endswith(".jpg") or f.lower().endswith(".cr2") or f.lower().endswith(".mov"):
-				modified_time = get_file_system_time(in_path + f)
-				y_path = time.strftime("%Y", modified_time)
-				m_path = time.strftime("%Y" + os.path.sep +"%Y_%m", modified_time)
-				d_path = time.strftime("%Y" + os.path.sep +"%Y_%m" + os.path.sep + "%Y_%m_%d", modified_time)
+				image_time = get_exif_time(in_path + f)
+				if image_time is None:
+					image_time = get_file_system_time(in_path + f)
+				y_path = time.strftime("%Y", image_time)
+				m_path = time.strftime("%Y" + os.path.sep +"%Y_%m", image_time)
+				d_path = time.strftime("%Y" + os.path.sep +"%Y_%m" + os.path.sep + "%Y_%m_%d", image_time)
 				f_path = os.path.join(os.path.join(out_path, d_path), f)
 				if not os.path.exists(os.path.join(out_path, d_path)):
 					if os.path.exists(os.path.join(out_path, m_path)):
