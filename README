@@ -1,1 +1,3 @@
-This python script copies image files over into a hierarchy based on date
+This python script copies image files over into a hierarchy based on date. This script requires that the Python Imaging Library be installed. This scripts copies the JPG, CR2, and MOV files one directory (not including subdirectories) to another directory. The heirarchy structure is listed below.
+
+/output_directory/YYYY/YYYY_MM/YYYY_MM_DD/
