@@ -23,14 +23,17 @@ def get_file_system_time(file_path):
 
 def get_exif_time(file_path):
     ret = {}
-    i = Image.open(file_path)
-    info = i._getexif()
-    for tag, value in info.items():
-		if TAGS.get(tag, tag) == "DateTimeOriginal":
-			if value is not None:
-				return time.strptime(value, '%Y:%m:%d %H:%M:%S')
-			else:
-				return None
+    try:
+		i = Image.open(file_path)
+		info = i._getexif()
+		for tag, value in info.items():
+			if TAGS.get(tag, tag) == "DateTimeOriginal":
+				if value is not None:
+					return time.strptime(value, '%Y:%m:%d %H:%M:%S')
+				else:
+					return None
+    except IOError, e:
+        return None
 	
 try:
 	in_path = add_trailing_separator(sys.argv[1])
