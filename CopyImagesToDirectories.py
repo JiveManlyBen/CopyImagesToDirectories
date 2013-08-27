@@ -44,6 +44,7 @@ except IndexError, e:
 	exit()
 try:
 	not_copied = False
+	copied_image_count = 0
         for f in os.listdir(in_path):
                 if os.path.isfile(os.path.join(in_path, f)):
 			if f.lower().endswith(".jpg") or f.lower().endswith(".cr2") or f.lower().endswith(".mov"):
@@ -69,10 +70,11 @@ try:
 				if (not os.path.isfile(f_path)):
 					print "copying " + os.path.join(in_path, f)
 					shutil.copy2(os.path.join(in_path, f), f_path)
+					copied_image_count += 1
 				elif not filecmp.cmp(os.path.join(in_path, f), f_path):
 					print "warning: file mismatch for \"" + f_path + "\""
 					not_copied = True
-	print "Copied new images from \"" + in_path + "\" to \"" + out_path + "\""
+	print "Copied " + str(copied_image_count) + " new images from \"" + in_path + "\" to \"" + out_path + "\""
 	if not_copied:
 		print "with errors"
 except OSError, e:
