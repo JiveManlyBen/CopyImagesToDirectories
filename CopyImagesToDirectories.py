@@ -63,7 +63,7 @@ def copy_image_files(in_path, out_path):
 								os.makedirs(os.path.join(out_path, d_path))
 
 					if (not os.path.isfile(f_path)):
-						print "copying " + os.path.join(in_path, f)
+						print "writing " + f_path
 						shutil.copy2(os.path.join(in_path, f), f_path)
 						copied_image_count += 1
 					elif not filecmp.cmp(os.path.join(in_path, f), f_path):
@@ -81,8 +81,14 @@ def copy_image_files(in_path, out_path):
 
 try:
 	in_path = add_trailing_separator(sys.argv[1])
-	out_path = add_trailing_separator(sys.argv[2])
-	print copy_image_files(in_path, out_path)
+	out_paths = [add_trailing_separator(sys.argv[2])]
+	if len(sys.argv) > 3:
+		out_paths.append(add_trailing_separator(sys.argv[3]))
+	messages = []
+	for out_path in out_paths:
+		messages.append(copy_image_files(in_path, out_path))
+	for message in messages:
+		print message
 except IndexError, e:
 	print "required input and output directories not supplied: " + str(e)
 	print "\n" + get_example_text()
