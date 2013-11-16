@@ -34,7 +34,7 @@ def get_exif_time(file_path):
 					return None
     except IOError, e:
         return None
-	
+
 try:
 	in_path = add_trailing_separator(sys.argv[1])
 	out_path = add_trailing_separator(sys.argv[2])
@@ -42,11 +42,13 @@ except IndexError, e:
 	print "required input and output directories not supplied: " + str(e)
 	print "\n" + get_example_text()
 	exit()
+
+message = ""
+copied_image_count = 0
+failed_image_count = 0
 try:
-	not_copied = False
-	copied_image_count = 0
-        for f in os.listdir(in_path):
-                if os.path.isfile(os.path.join(in_path, f)):
+	for f in os.listdir(in_path):
+		if os.path.isfile(os.path.join(in_path, f)):
 			if f.lower().endswith(".jpg") or f.lower().endswith(".cr2") or f.lower().endswith(".mov"):
 				image_time = get_exif_time(in_path + f)
 				if image_time is None:
@@ -73,9 +75,13 @@ try:
 					copied_image_count += 1
 				elif not filecmp.cmp(os.path.join(in_path, f), f_path):
 					print "warning: file mismatch for \"" + f_path + "\""
-					not_copied = True
-	print "Copied " + str(copied_image_count) + " new images from \"" + in_path + "\" to \"" + out_path + "\""
-	if not_copied:
-		print "with errors"
-except OSError, e:
-        print e
+					failed_image_count += 1
+except (IOError, OSError), e:
+	message = str(e)
+finally:
+	if len(message) > 0:
+		message = "\n" + message
+	if failed_image_count > 0:
+		message = " (with " + str(failed_image_count) + " errors)" + message
+	message = "Copied " + str(copied_image_count) + " new images from \"" + in_path + "\" to \"" + out_path + "\"" + message
+	print message
